@@ -7,8 +7,8 @@ export async function up(knex: Knex): Promise<void> {
     table.string('content')
     table.integer('likes').defaultTo(0)
     table.integer('user_id').unsigned().references('users.id')
-    table.timestamp('created_at').defaultTo(knex.fn.now())
-    table.timestamp('updated_at').defaultTo(knex.fn.now())
+    table.timestamp('createdAt').defaultTo(knex.fn.now())
+    table.timestamp('updatedAt').defaultTo(knex.fn.now())
   })
 }
 
