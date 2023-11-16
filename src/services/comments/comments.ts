@@ -44,8 +44,35 @@ export const comments = (app: Application) => {
         schemaHooks.validateQuery(commentsQueryValidator),
         schemaHooks.resolveQuery(commentsQueryResolver)
       ],
-      find: [],
-      get: [],
+      find: [
+        async (context) => {
+          // Menangani kondisional untuk mendapatkan tweet_id dari URL
+          const tweetId = context.params?.route?.tweet_id;
+          if (!tweetId) {
+            throw new Error('Invalid tweetId');
+          }
+          
+          // Menambahkan kondisional untuk mendapatkan data komentar berdasarkan tweet_id
+          context.params.query = { tweet_id: tweetId };
+        }
+      ],
+      get: [
+        async (context) => {
+          // Menangani kondisional untuk mendapatkan tweet_id dan comment_id dari URL
+          const tweetId = context.params?.route?.tweet_id;
+          const commentId = Number(context.id);
+        
+          if (!tweetId || !commentId) {
+            throw new Error('Invalid tweetId or commentId');
+          }
+        
+          // Menambahkan kondisional untuk mendapatkan data komentar berdasarkan tweet_id dan comment_id
+          context.params.query = {
+            tweet_id: tweetId,
+            id: commentId,
+          };
+        }
+      ],
       create: [
         schemaHooks.validateData(commentsDataValidator),
         schemaHooks.resolveData(commentsDataResolver)
