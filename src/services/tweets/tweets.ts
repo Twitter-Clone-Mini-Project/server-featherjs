@@ -1,6 +1,6 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
 import { authenticate } from '@feathersjs/authentication'
-
+import { HookContext } from '@feathersjs/feathers';
 import { hooks as schemaHooks } from '@feathersjs/schema'
 
 import {
@@ -46,7 +46,26 @@ export const tweets = (app: Application) => {
       find: [],
       get: [],
       create: [schemaHooks.validateData(tweetsDataValidator), schemaHooks.resolveData(tweetsDataResolver)],
-      patch: [schemaHooks.validateData(tweetsPatchValidator), schemaHooks.resolveData(tweetsPatchResolver)],
+      patch: [
+        schemaHooks.validateData(tweetsPatchValidator),
+        schemaHooks.resolveData(tweetsPatchResolver),
+        async (context: HookContext) => {
+          // Menambahkan logika untuk mengupdate nilai 'likes'
+          const { id } = context;
+          
+          // Memastikan bahwa operasi patch hanya dilakukan jika field 'likes' diubah
+          if ('likes' in context.data) {
+            // Mengambil data tweet sebelum di-update
+            const tweetBeforeUpdate = await context.service.get(id);
+  
+            // Menghitung jumlah likes yang baru
+            const newLikes = tweetBeforeUpdate.likes + 1;
+  
+            // Menetapkan nilai likes yang baru ke dalam data yang akan di-update
+            context.data.likes = newLikes;
+          }
+        }
+      ],
       remove: []
     },
     after: {

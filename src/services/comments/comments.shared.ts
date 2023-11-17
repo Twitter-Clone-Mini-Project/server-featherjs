@@ -10,7 +10,7 @@ export type CommentsClientService = Pick<
   (typeof commentsMethods)[number]
 >
 
-export const commentsPath = '/tweet/:tweet_id/comments'
+export const commentsPath = '/tweets/:tweet_id/comments'
 
 export const commentsMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
 

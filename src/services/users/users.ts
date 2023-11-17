@@ -1,7 +1,8 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
 import { authenticate } from '@feathersjs/authentication'
-
 import { hooks as schemaHooks } from '@feathersjs/schema'
+import { HookContext } from '@feathersjs/feathers';
+import { BadRequest } from '@feathersjs/errors';
 
 import {
   userDataValidator,
@@ -20,6 +21,7 @@ import { userPath, userMethods } from './users.shared'
 
 export * from './users.class'
 export * from './users.schema'
+
 
 // A configure function that registers the service and its hooks via `app.configure`
 export const user = (app: Application) => {
@@ -46,7 +48,28 @@ export const user = (app: Application) => {
       all: [schemaHooks.validateQuery(userQueryValidator), schemaHooks.resolveQuery(userQueryResolver)],
       find: [],
       get: [],
-      create: [schemaHooks.validateData(userDataValidator), schemaHooks.resolveData(userDataResolver)],
+      create: [
+        // Menambahkan validasi di hook create
+        (context: HookContext) => {
+          const { data } = context;
+
+          // Misalnya, menambahkan validasi bahwa username harus diisi
+          if (data.username === "") {
+            throw new BadRequest('Username is required.');
+          }
+
+            // Misalnya, menambahkan validasi bahwa username harus diisi
+            if (data.password === "") {
+              throw new BadRequest('Password is required.');
+            }
+
+          // Anda dapat menambahkan validasi lain sesuai kebutuhan
+
+          return context;
+        },
+        schemaHooks.validateData(userDataValidator),
+        schemaHooks.resolveData(userDataResolver)
+      ],
       patch: [schemaHooks.validateData(userPatchValidator), schemaHooks.resolveData(userPatchResolver)],
       remove: []
     },
