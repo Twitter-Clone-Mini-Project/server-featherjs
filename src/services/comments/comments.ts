@@ -1,6 +1,7 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
 import { authenticate } from '@feathersjs/authentication'
-
+import { HookContext } from '@feathersjs/feathers';
+import { BadRequest } from '@feathersjs/errors';
 import { hooks as schemaHooks } from '@feathersjs/schema'
 
 import {
@@ -74,6 +75,16 @@ export const comments = (app: Application) => {
         }
       ],
       create: [
+        (context: HookContext) => {
+          const { data } = context;
+  
+          // Misalnya, menambahkan validasi bahwa content harus diisi
+          if (data.content === "") {
+            throw new BadRequest('Content is required.');
+          }
+  
+          return context;
+        },
         schemaHooks.validateData(commentsDataValidator),
         schemaHooks.resolveData(commentsDataResolver)
       ],

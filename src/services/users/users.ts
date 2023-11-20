@@ -33,6 +33,33 @@ export const user = (app: Application) => {
     // You can add additional custom events to be sent to clients here
     events: []
   })
+
+  app.service('authentication').hooks({
+    after: {
+      create: [
+        (context: HookContext) => {
+            // Hapus kunci "authentication" dari respons jika provider
+            if (context.params.provider && context.result.authentication) {
+              delete context.result.authentication;
+            }
+
+            if (context.result && context.result.user) {
+              // Hapus properti "password" dari objek pengguna
+              delete context.result.user.password;
+    
+              // Tambahkan properti "status" dan "message"
+              context.result = {
+                status: 'Success',
+                message: 'Success',
+                data: context.result,
+              };
+            }
+  
+          return context;
+        },
+      ],
+    },
+  });
   // Initialize hooks
   app.service(userPath).hooks({
     around: {
@@ -74,7 +101,21 @@ export const user = (app: Application) => {
       remove: []
     },
     after: {
-      all: []
+      all: [],
+      create: [ // Menambahkan validasi di hook create
+      (context: HookContext) => {
+       // Menghilangkan kunci 'limit' dari respons jika tidak ingin disertakan dalam respons
+            if (context.result) {
+              // Tambahkan properti "status" dan "message"
+              context.result = {
+                status: 'Success',
+                message: 'Success',
+                data: context.result,
+              };
+            } 
+              return context;
+          }
+      ],
     },
     error: {
       all: []

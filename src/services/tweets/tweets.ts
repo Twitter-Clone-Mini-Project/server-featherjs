@@ -1,6 +1,7 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
 import { authenticate } from '@feathersjs/authentication'
 import { HookContext } from '@feathersjs/feathers';
+import { BadRequest } from '@feathersjs/errors';
 import { hooks as schemaHooks } from '@feathersjs/schema'
 
 import {
@@ -43,9 +44,30 @@ export const tweets = (app: Application) => {
     },
     before: {
       all: [schemaHooks.validateQuery(tweetsQueryValidator), schemaHooks.resolveQuery(tweetsQueryResolver)],
-      find: [],
+      find: [
+        async (context: HookContext) => {
+          // Menghilangkan kunci 'limit' dari respons jika tidak ingin disertakan dalam respons
+           if (context.result) {
+              // Hapus properti "limit" dari parameter permintaan
+            delete context.params.query.limit;
+
+            return context;
+          }
+         }
+      ],
       get: [],
-      create: [schemaHooks.validateData(tweetsDataValidator), schemaHooks.resolveData(tweetsDataResolver)],
+      create: [ // Menambahkan validasi di hook create
+      (context: HookContext) => {
+        const { data } = context;
+
+        // Misalnya, menambahkan validasi bahwa content harus diisi
+        if (data.content === "") {
+          throw new BadRequest('Content is required.');
+        }
+
+        return context;
+      },
+        schemaHooks.validateData(tweetsDataValidator), schemaHooks.resolveData(tweetsDataResolver)],
       patch: [
         schemaHooks.validateData(tweetsPatchValidator),
         schemaHooks.resolveData(tweetsPatchResolver),
@@ -69,7 +91,41 @@ export const tweets = (app: Application) => {
       remove: []
     },
     after: {
-      all: []
+      all: [],
+      find: [
+        async (context: HookContext) => {
+             // Menghilangkan kunci 'limit' dari respons jika tidak ingin disertakan dalam respons
+              if (context.result) {
+                // Tambahkan properti "status" dan "message"
+                context.result = {
+                  status: 'Success',
+                  message: 'Success',
+                  ...context.result  // Menyalin properti lainnya dari hasil permintaan
+                };
+              } 
+              delete context.result.limit;
+              delete context.result.skip;
+        
+              return context;
+        }
+      ],
+      create: [ // Menambahkan validasi di hook create
+      (context: HookContext) => {
+       // Menghilangkan kunci 'limit' dari respons jika tidak ingin disertakan dalam respons
+            if (context.result) {
+              // Tambahkan properti "status" dan "message"
+              context.result = {
+                status: 'Success',
+                message: 'Success',
+                data: context.result,
+              };
+            } 
+              delete context.result.limit;
+              delete context.result.skip;
+
+              return context;
+          }
+      ],
     },
     error: {
       all: []
