@@ -73,7 +73,7 @@ export const tweets = (app: Application) => {
         schemaHooks.resolveData(tweetsPatchResolver),
         async (context: HookContext) => {
           // Menambahkan logika untuk mengupdate nilai 'likes'
-          const { id } = context;
+          const { id,data } = context;
           
           // Memastikan bahwa operasi patch hanya dilakukan jika field 'likes' diubah
           if ('likes' in context.data) {
@@ -86,6 +86,13 @@ export const tweets = (app: Application) => {
             // Menetapkan nilai likes yang baru ke dalam data yang akan di-update
             context.data.likes = newLikes;
           }
+
+           // Misalnya, menambahkan validasi bahwa content harus diisi
+              if (data.content === "") {
+                throw new BadRequest('Content is required.');
+              }
+
+              return context;
         }
       ],
       remove: []
@@ -125,6 +132,28 @@ export const tweets = (app: Application) => {
 
               return context;
           }
+      ],
+      patch: [
+        async (context: HookContext) => {
+          // Tambahkan properti "status" dan "message"
+          context.result = {
+            status: 'Success',
+            message: 'Success',
+            data: context.result,
+          };
+          return context;
+        }
+      ],
+      remove: [
+        async (context: HookContext) => {
+          // Tambahkan properti "status" dan "message"
+          context.result = {
+            status: 'Success',
+            message: 'Success',
+            data: context.result,
+          };
+          return context;
+        }
       ],
     },
     error: {

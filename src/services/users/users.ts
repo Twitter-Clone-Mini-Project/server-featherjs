@@ -59,6 +59,25 @@ export const user = (app: Application) => {
         },
       ],
     },
+    before: {
+      create: [
+        (context: HookContext) => {
+          const { data } = context;
+
+          // Misalnya, menambahkan validasi bahwa username harus diisi
+          if (data.username === "") {
+            throw new BadRequest('Username is required.');
+          }
+
+            // Misalnya, menambahkan validasi bahwa username harus diisi
+            if (data.password === "") {
+              throw new BadRequest('Password is required.');
+            }
+  
+          return context;
+        },
+      ],
+    },
   });
   // Initialize hooks
   app.service(userPath).hooks({
@@ -107,6 +126,7 @@ export const user = (app: Application) => {
        // Menghilangkan kunci 'limit' dari respons jika tidak ingin disertakan dalam respons
             if (context.result) {
               // Tambahkan properti "status" dan "message"
+              delete context.result.password;
               context.result = {
                 status: 'Success',
                 message: 'Success',
@@ -118,7 +138,23 @@ export const user = (app: Application) => {
       ],
     },
     error: {
-      all: []
+      all: [],
+      create: [
+        async (context: HookContext) => {
+          if (context.error && context.error.name === 'BadRequest' && context.error.className === 'bad-request') {
+            // Cek apakah pesan kesalahan berisi informasi tentang duplikasi kunci unik
+            if (context.error.message.includes('Duplicate entry')) {
+              // Ganti pesan kesalahan dengan pesan yang diinginkan
+              context.error.message = 'Username is already taken. Please choose a different username.';
+              
+              // Set kode status menjadi 400 Bad Request
+              context.statusCode = 400;
+            }
+          }
+  
+          return context;
+        },
+      ],
     }
   })
 }

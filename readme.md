@@ -2,458 +2,962 @@
 
 ### List of available endpoints:
 
+-   POST /users
+-   POST /authentication
+-   POST /tweets
 -   GET /tweets
--   POST /sign
--   POST /comment/:tweet_id
--   PATCH /like/:tweet_id
--   POST /tweets/:user_id
--   GET /tweets/:user_id
--   DELETE /tweets/:user_id/:tweet_id
--   PUT /tweets/:user_id/:tweet_id
+-   PATCH /tweets/:tweet_id
+-   POST /tweets/:tweet_id/comments
+-   GET /tweets/:tweet_id/comments
+-   PATCH /tweets/:tweet_id/comments/:comment_id
+-   DELETE /tweets/:tweet_id/comments/:comment_id
+-   DELETE /tweets/:tweet_id
 
 
-## 1. GET /tweets
+## 1. POST /users
 
 ### Description
 
--   get all tweets
+-   register new user
+
+### request
+
+```json
+ {
+  "username": "bejo",
+  "password": "12345"
+}
+```
+
+
+### Response
+
+Response (201)
+
+```json
+{
+  "status": "Success",
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "username": "bejo",
+    "createdAt": "2023-11-19T21:20:41.000Z",
+    "updatedAt": "2023-11-19T21:20:41.000Z"
+  }
+}
+```
+
+### validation
+
+### Description
+
+-  username is required 
+
+### request
+
+```json
+ {
+  "username": "",
+  "password": "12345"
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "BadRequest",
+  "message": "Username is required.",
+  "code": 400,
+  "className": "bad-request"
+}
+```
+
+### Description
+
+-  username is required 
+
+### request
+
+```json
+ {
+  "username": "bejo",
+  "password": ""
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "BadRequest",
+  "message": "Password is required.",
+  "code": 400,
+  "className": "bad-request"
+}
+```
+
+### Description
+
+-  username is already
+
+### request
+
+```json
+ {
+  "username": "bejo",
+  "password": "12345"
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "BadRequest",
+  "message": "Username is already taken. Please choose a different username.",
+  "code": 400,
+  "className": "bad-request"
+}
+```
+
+## 2. POST /authentication
+
+### Description
+
+-   login user
+
+### request
+
+```json
+{
+  "strategy": "local",
+  "username": "bejo",
+  "password": "12345"
+}
+```
+
+
+### Response
+
+Response (201)
+
+```json
+{
+  "status": "Success",
+  "message": "Success",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJpYXQiOjE3MDA0NTQ4NzIsImV4cCI6MTcwMDU0MTI3MiwiYXVkIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsInN1YiI6IjEiLCJqdGkiOiI2NTJkZGQ1ZS03ODJjLTRiZDItOTk0ZC03YWMwNWQ0NzA4NmYifQ.X1zpcP8HcrIMglDfrUgas10UATnrFiqWvlNOkaMGC94",
+    "user": {
+      "id": 1,
+      "username": "bejo",
+      "createdAt": "2023-11-19T21:15:46.000Z",
+      "updatedAt": "2023-11-19T21:15:46.000Z"
+    }
+  }
+}
+```
+
+### validation
+
+### Description
+
+-  username is required 
+
+### request
+
+```json
+ {
+  "username": "",
+  "password": "12345"
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "BadRequest",
+  "message": "Username is required.",
+  "code": 400,
+  "className": "bad-request"
+}
+```
+
+### Description
+
+-  username is required 
+
+### request
+
+```json
+ {
+  "username": "bejo",
+  "password": ""
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "BadRequest",
+  "message": "Password is required.",
+  "code": 400,
+  "className": "bad-request"
+}
+```
+
+### Description
+
+-  invalid akun
+
+### request
+
+```json
+ {
+  "username": "bejo1",
+  "password": "12345"
+}
+```
+
+
+### Response
+
+Response (401)
+
+```json
+{
+  "name": "NotAuthenticated",
+  "message": "Invalid login",
+  "code": 401,
+  "className": "not-authenticated"
+}
+```
+
+## 3. POST /tweets
+
+### Description
+
+-   add new tweets
+
+### request
+
+```json
+{
+  "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
+  "user_id": 1
+}
+```
+
+
+### Response
+
+Response (201)
+
+```json
+{
+  "status": "Success",
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
+    "likes": 0,
+    "user_id": 1,
+    "createdAt": "2023-11-19T22:01:02.000Z",
+    "updatedAt": "2023-11-19T22:01:02.000Z"
+  }
+}
+```
+
+### validation
+
+### Description
+
+-  content is required 
+
+### request
+
+```json
+{
+  "content": "",
+  "user_id": 1
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "BadRequest",
+  "message": "Content is required.",
+  "code": 400,
+  "className": "bad-request"
+}
+```
+
+
+### Description
+
+-  jika tidak ada token
+
+### request
+
+```json
+{
+  "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
+  "user_id": 1
+}
+```
+
+
+### Response
+
+Response (401)
+
+```json
+{
+  "name": "NotAuthenticated",
+  "message": "Not authenticated",
+  "code": 401,
+  "className": "not-authenticated"
+}
+```
+
+
+## 4. GET /tweets
+
+### Description
+
+-   get tweets
 
 ### Response
 
 Response (200)
 
 ```json
-[
-  {
-    "id": 1,
-    "content": "Jangan pernah membicarakan kejelekan yang dimiliki oleh orang lain. Karena sesungguhnya orang yang membicarakan itulah yang menjadi orang jelek.",
-    "likes": 0,
-    "user_id": 1,
-    "created_at": "2023-11-09T00:31:17.000Z",
-    "updated_at": "2023-11-09T00:31:17.000Z",
-    "username": "tengkurizki",
-    "comments": []
-  },
-  {
-    "id": 2,
-    "content": "Beberapa orang masuk ke kehidupan kita dan meninggalkan jejak di hati. Sementara yang lain, masuk ke kehidupan kita dan membuat kita ingin meninggalkan jejak di muka mereka.",
-    "likes": 0,
-    "user_id": 2,
-    "created_at": "2023-11-09T00:31:17.000Z",
-    "updated_at": "2023-11-09T00:31:17.000Z",
-    "username": "jamaluddin",
-    "comments": [
-      {
-        "id": 1,
-        "content": "komen-1",
-        "user_id": 1,
-        "created_at": "2023-11-09 07:31:17.000000",
-        "updated_at": "2023-11-09 07:31:17.000000",
-        "user_username": "tengkurizki"
-      }
-    ]
-  }
-]
-```
-
-
-
-## 2. POST /sign
-
-### Description
-
--   authentication jika belum ada akun
-
-### Request
-
-```json
-[
-  {
-    "username": "bejo",
-    "password": "12345",
-  },
-]
-```
-
-### Response
-
-Response (201) 
-
-```json
 {
-  "id": 3,
-  "username" : "bejo"
+  "status": "Success",
+  "message": "Success",
+  "total": 1,
+  "data": [
+    {
+      "id": 1,
+      "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
+      "likes": 0,
+      "user_id": 1,
+      "createdAt": "2023-11-19T23:18:41.000Z",
+      "updatedAt": "2023-11-19T23:18:41.000Z"
+    }
+  ]
 }
 ```
 
+### validation
+
 ### Description
 
--   authentication jika sudah akun
-
-### Request
-
-```json
-[
-  {
-    "username": "tengkurizki",
-    "password": "12345",
-  },
-]
-```
+-  jika tidak ada token
 
 ### Response
 
-Response (200) 
+Response (401)
 
 ```json
 {
-  "id": 1,
-  "username" : "tengkurizki"
+  "name": "NotAuthenticated",
+  "message": "Not authenticated",
+  "code": 401,
+  "className": "not-authenticated"
 }
 ```
 
-### Description
-
--   validasi jika password atau username kosong
-
-### Request
-
-```json
-[
-  {
-    "username": "",
-    "password": "12345",
-  },
-]
-```
-
-```json
-[
-  {
-    "username": "tengkurizki",
-    "password": "",
-  },
-]
-```
-
-### Response
-
-Response (400) 
-
-```json
-{
-  "type": "Bad Request",
-  "message":"Username Or Password Is Requiered"
-}
-```
-
-### Description
-
--   validasi jika password salah
-
-### Request
-
-```json
-[
-  {
-    "username": "tengkurizki",
-    "password": "1234566666",
-  },
-]
-```
-
-
-### Response
-
-Response (400) 
-
-```json
-{
-  "type": "Bad Request",
-  "message":"the password is incorrect"
-}
-```
-
-
-## 3. POST POST /comment/1
-
-### Description
-
--   add comment
-
-### Request
-
-```json
-[
-  {
-    "user_id": "2",
-    "content": "komen-2"
-  },
-]
-```
-
-### Response
-
-Response (201) 
-
-```json
-{
-  "id": 2,
-  "content": "komen-2",
-  "tweet_id": 1,
-  "user_id": 2,
-  "created_at": "2023-11-09T01:12:01.000Z",
-  "updated_at": "2023-11-09T01:12:01.000Z"
-}
-```
-
-
-## 4. PATCH /like/2
-
-### Description
-
--   add like to table tweet
-
-### Response
-
-Response (201) 
-
-```json
-{
-  "id": 2,
-  "content": "Beberapa orang masuk ke kehidupan kita dan meninggalkan jejak di hati. Sementara yang lain, masuk ke kehidupan kita dan membuat kita ingin meninggalkan jejak di muka mereka.",
-  "likes": 1,
-  "user_id": 2,
-  "created_at": "2023-11-09T01:11:37.000Z",
-  "updated_at": "2023-11-09T01:11:37.000Z"
-}
-```
-
-
-## 5. POST /tweets/1
-
-### Description
-
--   add tweet
-
-### Request
-
-```json
-[
-  {
-    "content": "jadilah manusia yang bermanfaat bagi manusia lain",
-  },
-]
-```
-
-### Response
-
-Response (201) 
-
-```json
-{
-  "id": 3,
-  "content": "jadilah manusia yang bermanfaat bagi manusia lain",
-  "likes": 0,
-  "user_id": 1,
-  "created_at": "2023-11-09T19:57:12.000Z",
-  "updated_at": "2023-11-09T19:57:12.000Z",
-  "username": "tengkurizki",
-  "comments": []
-}
-```
-
-### Description
-
--   user belum login
-
-### Request
-
-```json
-[
-  {
-    "content": "jadilah manusia yang bermanfaat bagi manusia lain",
-  },
-]
-```
-
-### Response
-
-Response (401) 
-
-```json
-{
-  "type": "Authentication Required",
-  "message": "Please log in."
-}
-```
-
-## 6. GET /tweets/1
-
-### Description
-
--   get myTweet
-
-
-### Response
-
-Response (200) 
-
-```json
-[
-  {
-    "id": 1,
-    "content": "Jangan pernah membicarakan kejelekan yang dimiliki oleh orang lain. Karena sesungguhnya orang yang membicarakan itulah yang menjadi orang jelek.",
-    "likes": 0,
-    "user_id": 1,
-    "created_at": "2023-11-09T19:56:33.000Z",
-    "updated_at": "2023-11-09T19:56:33.000Z",
-    "username": "tengkurizki",
-    "comments": []
-  },
-  {
-    "id": 3,
-    "content": "jadilah manusia yang bermanfaat bagi manusia lain",
-    "likes": 0,
-    "user_id": 1,
-    "created_at": "2023-11-09T19:57:12.000Z",
-    "updated_at": "2023-11-09T19:57:12.000Z",
-    "username": "tengkurizki",
-    "comments": []
-  }
-]
-```
-
-### Description
-
--   user belum login
-
-
-### Response
-
-Response (401) 
-
-```json
-{
-  "type": "Authentication Required",
-  "message": "Please log in."
-}
-```
-
-
-## 7. DELETE /tweets/2/2
-
-### Description
-
--   delete tweets
-
-
-### Response
-
-Response (401) 
-
-```json
-{
-  "id": 2
-}
-```
-
-### Description
-
--   tweet not found
-
-
-### Response
-
-Response (401) 
-
-```json
-{
-  "type": "Not Found",
-  "message": "Tweet not found."
-}
-```
-
-### Description
-
--   user forbidden
-
-
-### Response
-
-Response (401) 
-
-```json
-{
-  "type": "Forbidden",
-  "message": "You are not allowed to access this resource."
-}
-```
-
-
-## 8. PUT /tweets/:user_id/:tweet_id
+## 5. PATCH /tweets/:tweet_id
 
 ### Description
 
 -   update tweets
 
-### Request
+### request
 
 ```json
-[
-  {
-    "content": "ini edit bro",
-  },
-]
+{
+  "content": "ini di update",
+}
 ```
 
 
 ### Response
 
-Response (200) 
+Response (200)
 
 ```json
 {
-  "id": 1,
-  "content": "ini edit bro",
-  "likes": 0,
-  "user_id": 1,
-  "created_at": "2023-11-12T20:36:29.000Z",
-  "updated_at": "2023-11-12T20:36:29.000Z",
-  "username": "tengkurizki",
-  "comments": []
+  "status": "Success",
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "content": "ini di update",
+    "likes": 0,
+    "user_id": 1,
+    "createdAt": "2023-11-19T23:18:41.000Z",
+    "updatedAt": "2023-11-19T23:18:41.000Z"
+  }
+}
+```
+
+### validation
+
+### Description
+
+-  tweet not found PATCH /tweets/5
+
+### request
+
+```json
+{
+  "content": "ini di update",
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "NotFound",
+  "message": "No record found for id '5'",
+  "code": 404,
+  "className": "not-found"
 }
 ```
 
 ### Description
 
--   tweet not found
+-  content is required 
+
+### request
+
+```json
+{
+  "content": "",
+}
+```
 
 
 ### Response
 
-Response (401) 
+Response (400)
 
 ```json
 {
-  "type": "Not Found",
-  "message": "Tweet not found."
+  "name": "BadRequest",
+  "message": "Content is required.",
+  "code": 400,
+  "className": "bad-request"
 }
 ```
 
 ### Description
 
--   user forbidden
+-  jika tidak ada token
+
+### request
+
+```json
+{
+  "content": "ini di update",
+}
+```
 
 
 ### Response
 
-Response (401) 
+Response (401)
 
 ```json
 {
-  "type": "Forbidden",
-  "message": "You are not allowed to access this resource."
+  "name": "NotAuthenticated",
+  "message": "Not authenticated",
+  "code": 401,
+  "className": "not-authenticated"
 }
 ```
 
+## 6. POST /tweets/:tweet_id/comments
+
+### Description
+
+-   add  comments /tweets/1/comments
+
+### request
+
+```json
+{
+  "content": "tweet yang sangat bagus!!",
+  "user_id": 1
+}
+```
+
+
+### Response
+
+Response (201)
+
+```json
+{
+  "status": "Success",
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "content": "tweet yang sangat bagus!!",
+    "tweet_id": 1,
+    "user_id": 1,
+    "createdAt": "2023-11-19T23:52:33.000Z",
+    "updatedAt": "2023-11-19T23:52:33.000Z"
+  }
+}
+```
+
+### validation
+
+### Description
+
+-  tweet not found POST /tweets/2/comments
+
+### request
+
+```json
+{
+  "content": "tweet yang sangat bagus!!",
+  "user_id": 1
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "NotFound",
+  "message": "No record found for id '2'",
+  "code": 404,
+  "className": "not-found"
+}
+```
+
+### Description
+
+-  content is required 
+
+### request
+
+```json
+{
+  "content": "",
+  "user_id": 1
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "BadRequest",
+  "message": "Content is required.",
+  "code": 400,
+  "className": "bad-request"
+}
+```
+
+### Description
+
+-  jika tidak ada token
+
+### request
+
+```json
+{
+  "content": "ini di update",
+}
+```
+
+
+### Response
+
+Response (401)
+
+```json
+{
+  "name": "NotAuthenticated",
+  "message": "Not authenticated",
+  "code": 401,
+  "className": "not-authenticated"
+}
+```
+
+## 7. GET /tweets/:tweet_id/comments
+
+### Description
+
+-   get all tweets /tweets/1/comments
+
+### Response
+
+Response (200)
+
+```json
+{
+  "status": "Success",
+  "message": "Success",
+  "total": 1,
+  "data": [
+    {
+      "id": 1,
+      "content": "tweet yang sangat bagus!!",
+      "tweet_id": 1,
+      "user_id": 1,
+      "createdAt": "2023-11-20T01:14:46.000Z",
+      "updatedAt": "2023-11-20T01:14:46.000Z"
+    }
+  ]
+}
+```
+
+### validation
+
+### Description
+
+-  tweet not found POST /tweets/2/comments
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "NotFound",
+  "message": "No record found for id '2'",
+  "code": 404,
+  "className": "not-found"
+}
+```
+
+### Description
+
+-  jika tidak ada token
+
+
+### Response
+
+Response (401)
+
+```json
+{
+  "name": "NotAuthenticated",
+  "message": "Not authenticated",
+  "code": 401,
+  "className": "not-authenticated"
+}
+```
+
+
+## 8. PATCH /tweets/:tweet_id/comments/:comment_id
+
+
+### Description
+
+-   update komentar
+
+### request
+
+```json
+{
+  "content": "ini di update",
+}
+```
+
+
+### Response
+
+Response (200)
+
+```json
+{
+  "status": "Success",
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "content": "ini di update",
+    "likes": 0,
+    "user_id": 1,
+    "createdAt": "2023-11-19T23:18:41.000Z",
+    "updatedAt": "2023-11-19T23:18:41.000Z"
+  }
+}
+```
+
+### validation
+
+### Description
+
+-  tweet not found PATCH /tweets/2/comments/1
+
+### request
+
+```json
+{
+  "content": "ini di update",
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "NotFound",
+  "message": "No record found for id '2'",
+  "code": 404,
+  "className": "not-found"
+}
+```
+
+
+### Description
+
+-  content is required 
+
+### request
+
+```json
+{
+  "content": "",
+}
+```
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "BadRequest",
+  "message": "Content is required.",
+  "code": 400,
+  "className": "bad-request"
+}
+```
+
+### Description
+
+-  jika tidak ada token
+
+### request
+
+```json
+{
+  "content": "ini di update",
+}
+```
+
+
+### Response
+
+Response (401)
+
+```json
+{
+  "name": "NotAuthenticated",
+  "message": "Not authenticated",
+  "code": 401,
+  "className": "not-authenticated"
+}
+```
+
+
+## 9. DELETE /tweets/:tweet_id/comments/:comment_id
+
+### Description
+
+-   delete komentar DELETE /tweets/1/comments/1
+
+### Response
+
+Response (200)
+
+```json
+{
+  "status": "Success",
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "content": "ini di update",
+    "likes": 0,
+    "user_id": 1,
+    "createdAt": "2023-11-19T23:18:41.000Z",
+    "updatedAt": "2023-11-19T23:18:41.000Z"
+  }
+}
+```
+
+### validation
+
+### Description
+
+-  tweet not found DELETE /tweets/2/comments/1
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "NotFound",
+  "message": "No record found for id '2'",
+  "code": 404,
+  "className": "not-found"
+}
+```
+
+
+### Description
+
+-  comments not found DELETE /tweets/1/comments/2
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "NotFound",
+  "message": "No record found for id '2'",
+  "code": 404,
+  "className": "not-found"
+}
+```
+
+### Description
+
+-  jika tidak ada token
+
+### request
+
+```json
+{
+  "content": "ini di update",
+}
+```
+
+
+### Response
+
+Response (401)
+
+```json
+{
+  "name": "NotAuthenticated",
+  "message": "Not authenticated",
+  "code": 401,
+  "className": "not-authenticated"
+}
+```
+
+## 10. DELETE /tweets/:tweet_id
+
+### Description
+
+-   delete tweet
+
+
+### Response
+
+Response (200)
+
+```json
+{
+  "status": "Success",
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
+    "likes": 0,
+    "user_id": 1,
+    "createdAt": "2023-11-20T01:14:34.000Z",
+    "updatedAt": "2023-11-20T01:14:34.000Z"
+  }
+}
+```
+
+### validation
+
+### Description
+
+-  tweet not found DELETE /tweets/5
+
+
+
+### Response
+
+Response (400)
+
+```json
+{
+  "name": "NotFound",
+  "message": "No record found for id '5'",
+  "code": 404,
+  "className": "not-found"
+}
+```
+
+
+### Description
+
+-  jika tidak ada token
+
+
+
+### Response
+
+Response (401)
+
+```json
+{
+  "name": "NotAuthenticated",
+  "message": "Not authenticated",
+  "code": 401,
+  "className": "not-authenticated"
+}
+```
