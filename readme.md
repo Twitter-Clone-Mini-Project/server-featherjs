@@ -357,6 +357,10 @@ Response (200)
 {
   "status": "Success",
   "message": "Success",
+   "meta": {
+    "limit": 50,
+    "skip": 0
+  },
   "total": 1,
   "data": [
     {
@@ -635,6 +639,10 @@ Response (200)
 {
   "status": "Success",
   "message": "Success",
+   "meta": {
+    "limit": 50,
+    "skip": 0
+  },
   "total": 1,
   "data": [
     {

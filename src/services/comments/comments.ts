@@ -120,11 +120,13 @@ export const comments = (app: Application) => {
                 context.result = {
                   status: 'Success',
                   message: 'Success',
+                  meta:{
+                    limit:context.result.limit,
+                    skip:context.result.skip
+                  },
                   ...context.result  // Menyalin properti lainnya dari hasil permintaan
                 };
               } 
-              delete context.result.limit;
-              delete context.result.skip;
         
               return context;
         }
