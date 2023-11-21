@@ -140,10 +140,10 @@ Response (400)
 
 ```json
 {
-  "strategy": "local",
   "username": "bejo",
   "password": "12345"
 }
+
 ```
 
 

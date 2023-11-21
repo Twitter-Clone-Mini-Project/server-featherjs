@@ -73,6 +73,10 @@ export const user = (app: Application) => {
             if (data.password === "") {
               throw new BadRequest('Password is required.');
             }
+
+            if (!context.data.strategy) {
+              context.data.strategy = 'local';
+            }
   
           return context;
         },
