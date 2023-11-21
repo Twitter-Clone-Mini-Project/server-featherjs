@@ -1,8 +1,9 @@
 import { app } from './app'
 import { logger } from './logger'
 
-const port = app.get('port')
-const host = app.get('host')
+const port = Number(process.env.PORT) || app.get('port')
+const host = process.env.HOST || app.get('host')
+
 
 process.on('unhandledRejection', (reason) => logger.error('Unhandled Rejection %O', reason))
 
