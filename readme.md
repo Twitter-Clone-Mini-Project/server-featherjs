@@ -561,7 +561,7 @@ Response (201)
 
 ### Response
 
-Response (400)
+Response (404)
 
 ```json
 {
@@ -666,7 +666,7 @@ Response (200)
 
 ### Response
 
-Response (400)
+Response (404)
 
 ```json
 {
@@ -748,7 +748,7 @@ Response (200)
 
 ### Response
 
-Response (400)
+Response (404)
 
 ```json
 {
@@ -847,7 +847,7 @@ Response (200)
 
 ### Response
 
-Response (400)
+Response (404)
 
 ```json
 {
@@ -866,7 +866,7 @@ Response (400)
 
 ### Response
 
-Response (400)
+Response (404)
 
 ```json
 {
