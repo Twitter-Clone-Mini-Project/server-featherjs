@@ -64,15 +64,15 @@ export const user = (app: Application) => {
         (context: HookContext) => {
           const { data } = context;
 
-          // Misalnya, menambahkan validasi bahwa username harus diisi
-          if (data.username === "") {
-            throw new BadRequest('Username is required.');
-          }
+          // // Misalnya, menambahkan validasi bahwa username harus diisi
+          // if (data.username === "") {
+          //   throw new BadRequest('Username is required.');
+          // }
 
-            // Misalnya, menambahkan validasi bahwa username harus diisi
-            if (data.password === "") {
-              throw new BadRequest('Password is required.');
-            }
+          //   // Misalnya, menambahkan validasi bahwa username harus diisi
+          //   if (data.password === "") {
+          //     throw new BadRequest('Password is required.');
+          //   }
 
             if (!context.data.strategy) {
               context.data.strategy = 'local';
@@ -102,15 +102,31 @@ export const user = (app: Application) => {
         // Menambahkan validasi di hook create
         (context: HookContext) => {
           const { data } = context;
-
+          
           // Misalnya, menambahkan validasi bahwa username harus diisi
-          if (data.username === "") {
-            throw new BadRequest('Username is required.');
-          }
+              if (data.username === "") {
+                throw new BadRequest('Username is required.');
+              }
 
             // Misalnya, menambahkan validasi bahwa username harus diisi
             if (data.password === "") {
               throw new BadRequest('Password is required.');
+            }
+
+             // Misalnya, menambahkan validasi bahwa username harus diisi
+             if (data.confirm_password === "") {
+              throw new BadRequest('Confirm Password is required.');
+            }
+
+            if (data.password.length < 3) {
+              throw new BadRequest('Password is too short. Please provide a password with at least 3 characters.');
+            }
+
+              // Pastikan password dan confirm_password cocok
+            if (data.password !== data.confirm_password) {
+                throw new BadRequest('Password do not match.');
+            }else{
+              delete data.confirm_password
             }
 
           // Anda dapat menambahkan validasi lain sesuai kebutuhan

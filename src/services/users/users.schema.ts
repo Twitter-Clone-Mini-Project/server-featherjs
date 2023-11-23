@@ -14,6 +14,7 @@ export const userSchema = Type.Object(
     id: Type.Number(),
     username: Type.String(),
     password: Type.Optional(Type.String()),
+    confirm_password: Type.Optional(Type.String()),
     createdAt: Type.String(), 
     updatedAt: Type.String(), 
   },
@@ -29,7 +30,7 @@ export const userExternalResolver = resolve<User, HookContext<UserService>>({
 })
 
 // Schema for creating new entries
-export const userDataSchema = Type.Pick(userSchema, ['username', 'password'], {
+export const userDataSchema = Type.Pick(userSchema, ['username', 'password','confirm_password'], {
   $id: 'UserData'
 })
 export type UserData = Static<typeof userDataSchema>
