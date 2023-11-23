@@ -939,7 +939,7 @@ Response (200)
 
 ### Response
 
-Response (400)
+Response (404)
 
 ```json
 {
