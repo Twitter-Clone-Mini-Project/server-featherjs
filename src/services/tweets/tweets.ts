@@ -118,6 +118,19 @@ export const tweets = (app: Application) => {
              // Menghilangkan kunci 'limit' dari respons jika tidak ingin disertakan dalam respons
               if (context.result) {
                 // Tambahkan properti "status" dan "message"
+                let data = context.result.data
+                for (let i = 0; i < data.length; i++) {
+                  let dataUser = await context.app.service('users').get(data[i].userId);
+                  data[i].username = dataUser.username
+                }
+
+                // let tweetId = data[0].id
+                // console.log(tweetId);
+                // let comments = await context.app.service('/tweets/' + tweetId + '/comments').find();
+                // console.log(comments);
+
+                
+                
                 context.result = {
                   status: 'Success',
                   message: 'Success',
