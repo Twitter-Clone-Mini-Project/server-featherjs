@@ -1,7 +1,7 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
 import { authenticate } from '@feathersjs/authentication'
 import { HookContext } from '@feathersjs/feathers';
-import { BadRequest } from '@feathersjs/errors';
+import { BadRequest, Forbidden } from '@feathersjs/errors';
 import { hooks as schemaHooks } from '@feathersjs/schema'
 
 import {
@@ -72,12 +72,15 @@ export const tweets = (app: Application) => {
       get: [],
       create: [ // Menambahkan validasi di hook create
       (context: HookContext) => {
-        const { data } = context;
+        const { data,params } = context;
+        const { headers,user } = params;
 
         // Misalnya, menambahkan validasi bahwa content harus diisi
         if (data.content === "") {
           throw new BadRequest('Content is required.');
         }
+
+        data.userId = user.id
 
         return context;
       },
@@ -87,12 +90,36 @@ export const tweets = (app: Application) => {
         schemaHooks.resolveData(tweetsPatchResolver),
         async (context: HookContext) => {
           // Menambahkan logika untuk mengupdate nilai 'likes'
-          const { id,data } = context;
+          const { id,data,params } = context;
+          const { headers,user } = params;
+
+          const tweetBeforeUpdate = await context.service.get(id);
+
+          
+          if (tweetBeforeUpdate?.status) {
+             // Hentikan eksekusi hook
+             context.result = null;
+
+             // Kirim respons langsung ke klien dengan status 403
+             context.statusCode = 404;
+             context.dispatch = { code: 404, message: 'NotFound' };
+            
+            return tweetBeforeUpdate
+          }
+          
+          if (user.id !== tweetBeforeUpdate.userId) {
+            // Hentikan eksekusi hook
+            context.result = null;
+
+            // Kirim respons langsung ke klien dengan status 403
+            context.statusCode = 403;
+            context.dispatch = { code: 403, message: 'Forbidden' };
+          }
+          
           
           // Memastikan bahwa operasi patch hanya dilakukan jika field 'likes' diubah
           if ('likes' in context.data) {
             // Mengambil data tweet sebelum di-update
-            const tweetBeforeUpdate = await context.service.get(id);
   
             // Menghitung jumlah likes yang baru
             const newLikes = tweetBeforeUpdate.likes + 1;
@@ -109,7 +136,42 @@ export const tweets = (app: Application) => {
               return context;
         }
       ],
-      remove: []
+      remove: [
+        async (context: HookContext) => {
+          // Menambahkan logika untuk mengupdate nilai 'likes'
+          const { id } = context;
+          const { params } = context;
+          const { user } = params;
+
+    
+
+          const tweetBeforeUpdate = await context.service.get(id);
+
+
+        if (tweetBeforeUpdate?.status) {
+             // Hentikan eksekusi hook
+             context.result = null;
+
+             // Kirim respons langsung ke klien dengan status 403
+             context.statusCode = 404;
+             context.dispatch = { code: 404, message: 'NotFound' };
+            
+            return tweetBeforeUpdate
+          }
+          
+          if (user.id !== tweetBeforeUpdate.userId) {
+            // Hentikan eksekusi hook
+            context.result = null;
+
+            // Kirim respons langsung ke klien dengan status 403
+            context.statusCode = 403;
+            context.dispatch = { code: 403, message: 'Forbidden' };
+          }
+          
+
+              return context;
+        }
+      ]
     },
     after: {
       all: [],
@@ -124,13 +186,6 @@ export const tweets = (app: Application) => {
                   data[i].username = dataUser.username
                 }
 
-                // let tweetId = data[0].id
-                // console.log(tweetId);
-                // let comments = await context.app.service('/tweets/' + tweetId + '/comments').find();
-                // console.log(comments);
-
-                
-                
                 context.result = {
                   status: 'Success',
                   message: 'Success',
@@ -163,22 +218,49 @@ export const tweets = (app: Application) => {
       patch: [
         async (context: HookContext) => {
           // Tambahkan properti "status" dan "message"
-          context.result = {
-            status: 'Success',
-            message: 'Success',
-            data: context.result,
-          };
+
+          if (context.dispatch?.code === 403) {
+            context.result = {
+              status: 'Forbidden',
+              message: 'Forbidden',
+            };
+          }else if(context.dispatch?.code === 404) {
+            context.result = {
+              status: 'NotFound',
+              message: context.message,
+            };
+          }else{
+            context.result = {
+              status: 'Success',
+              message: 'Success',
+              data: context.result,
+            };
+          }
+          
           return context;
         }
       ],
       remove: [
         async (context: HookContext) => {
           // Tambahkan properti "status" dan "message"
-          context.result = {
-            status: 'Success',
-            message: 'Success',
-            data: context.result,
-          };
+          if (context.dispatch?.code === 403) {
+            context.result = {
+              status: 'Forbidden',
+              message: 'Forbidden',
+            };
+          }else if(context.dispatch?.code === 404) {
+            context.result = {
+              status: 'NotFound',
+              message: context.message,
+            };
+          }else{
+            context.result = {
+              status: 'Success',
+              message: 'Success',
+              data: context.result,
+            };
+          }
+          
           return context;
         }
       ],
