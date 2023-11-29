@@ -12,8 +12,8 @@ export const commentsSchema = Type.Object(
   {
     id: Type.Number(),
     content: Type.String(),
-    tweet_id: Type.Number(), 
-    user_id: Type.Number(), 
+    tweetId: Type.Number(), 
+    userId: Type.Number(), 
     createdAt: Type.String(), 
     updatedAt: Type.String(), 
   },
@@ -26,7 +26,7 @@ export const commentsResolver = resolve<Comments, HookContext<CommentsService>>(
 export const commentsExternalResolver = resolve<Comments, HookContext<CommentsService>>({})
 
 // Schema for creating new entries
-export const commentsDataSchema = Type.Pick(commentsSchema, ['content', 'tweet_id', 'user_id'], {
+export const commentsDataSchema = Type.Pick(commentsSchema, ['content', 'tweetId', 'userId'], {
   $id: 'CommentsData'
 })
 export type CommentsData = Static<typeof commentsDataSchema>
@@ -42,7 +42,7 @@ export const commentsPatchValidator = getValidator(commentsPatchSchema, dataVali
 export const commentsPatchResolver = resolve<Comments, HookContext<CommentsService>>({})
 
 // Schema for allowed query properties
-export const commentsQueryProperties = Type.Pick(commentsSchema, ['id','content', 'tweet_id', 'user_id','createdAt','updatedAt'])
+export const commentsQueryProperties = Type.Pick(commentsSchema, ['id','content', 'tweetId', 'userId','createdAt','updatedAt'])
 export const commentsQuerySchema = Type.Intersect(
   [
     querySyntax(commentsQueryProperties),

@@ -6,12 +6,12 @@
 -   POST /authentication
 -   POST /tweets
 -   GET /tweets
--   PATCH /tweets/:tweet_id
--   POST /tweets/:tweet_id/comments
--   GET /tweets/:tweet_id/comments
--   PATCH /tweets/:tweet_id/comments/:comment_id
--   DELETE /tweets/:tweet_id/comments/:comment_id
--   DELETE /tweets/:tweet_id
+-   PATCH /tweets/:tweetId
+-   POST /tweets/:tweetId/comments
+-   GET /tweets/:tweetId/comments
+-   PATCH /tweets/:tweetId/comments/:comment_id
+-   DELETE /tweets/:tweetId/comments/:comment_id
+-   DELETE /tweets/:tweetId
 
 
 ## 1. POST /users
@@ -70,9 +70,7 @@ Response (400)
 ```json
 {
   "name": "BadRequest",
-  "message": "Username is required.",
-  "code": 400,
-  "className": "bad-request"
+  "message": "Username is required."
 }
 ```
 
@@ -98,8 +96,6 @@ Response (400)
 {
   "name": "BadRequest",
   "message": "Password is required.",
-  "code": 400,
-  "className": "bad-request"
 }
 ```
 
@@ -125,8 +121,6 @@ Response (400)
 {
   "name": "BadRequest",
   "message": "Username is already taken. Please choose a different username.",
-  "code": 400,
-  "className": "bad-request"
 }
 ```
 
@@ -191,8 +185,6 @@ Response (400)
 {
   "name": "BadRequest",
   "message": "Username is required.",
-  "code": 400,
-  "className": "bad-request"
 }
 ```
 
@@ -261,7 +253,7 @@ Response (401)
 ```json
 {
   "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
-  "user_id": 1
+  "userId": 1
 }
 ```
 
@@ -278,7 +270,7 @@ Response (201)
     "id": 1,
     "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
     "likes": 0,
-    "user_id": 1,
+    "userId": 1,
     "createdAt": "2023-11-19T22:01:02.000Z",
     "updatedAt": "2023-11-19T22:01:02.000Z"
   }
@@ -296,7 +288,7 @@ Response (201)
 ```json
 {
   "content": "",
-  "user_id": 1
+  "userId": 1
 }
 ```
 
@@ -309,8 +301,6 @@ Response (400)
 {
   "name": "BadRequest",
   "message": "Content is required.",
-  "code": 400,
-  "className": "bad-request"
 }
 ```
 
@@ -324,7 +314,7 @@ Response (400)
 ```json
 {
   "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
-  "user_id": 1
+  "userId": 1
 }
 ```
 
@@ -337,8 +327,6 @@ Response (401)
 {
   "name": "NotAuthenticated",
   "message": "Not authenticated",
-  "code": 401,
-  "className": "not-authenticated"
 }
 ```
 
@@ -367,7 +355,7 @@ Response (200)
       "id": 1,
       "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
       "likes": 0,
-      "user_id": 1,
+      "userId": 1,
       "createdAt": "2023-11-19T23:18:41.000Z",
       "updatedAt": "2023-11-19T23:18:41.000Z"
     }
@@ -389,12 +377,10 @@ Response (401)
 {
   "name": "NotAuthenticated",
   "message": "Not authenticated",
-  "code": 401,
-  "className": "not-authenticated"
 }
 ```
 
-## 5. PATCH /tweets/:tweet_id
+## 5. PATCH /tweets/:tweetId
 
 ### Description
 
@@ -421,7 +407,7 @@ Response (200)
     "id": 1,
     "content": "ini di update",
     "likes": 0,
-    "user_id": 1,
+    "userId": 1,
     "createdAt": "2023-11-19T23:18:41.000Z",
     "updatedAt": "2023-11-19T23:18:41.000Z"
   }
@@ -451,8 +437,6 @@ Response (400)
 {
   "name": "NotFound",
   "message": "No record found for id '5'",
-  "code": 404,
-  "className": "not-found"
 }
 ```
 
@@ -477,8 +461,6 @@ Response (400)
 {
   "name": "BadRequest",
   "message": "Content is required.",
-  "code": 400,
-  "className": "bad-request"
 }
 ```
 
@@ -503,12 +485,10 @@ Response (401)
 {
   "name": "NotAuthenticated",
   "message": "Not authenticated",
-  "code": 401,
-  "className": "not-authenticated"
 }
 ```
 
-## 6. POST /tweets/:tweet_id/comments
+## 6. POST /tweets/:tweetId/comments
 
 ### Description
 
@@ -519,7 +499,7 @@ Response (401)
 ```json
 {
   "content": "tweet yang sangat bagus!!",
-  "user_id": 1
+  "userId": 1
 }
 ```
 
@@ -535,8 +515,8 @@ Response (201)
   "data": {
     "id": 1,
     "content": "tweet yang sangat bagus!!",
-    "tweet_id": 1,
-    "user_id": 1,
+    "tweetId": 1,
+    "userId": 1,
     "createdAt": "2023-11-19T23:52:33.000Z",
     "updatedAt": "2023-11-19T23:52:33.000Z"
   }
@@ -554,7 +534,7 @@ Response (201)
 ```json
 {
   "content": "tweet yang sangat bagus!!",
-  "user_id": 1
+  "userId": 1
 }
 ```
 
@@ -567,8 +547,6 @@ Response (404)
 {
   "name": "NotFound",
   "message": "No record found for id '2'",
-  "code": 404,
-  "className": "not-found"
 }
 ```
 
@@ -581,7 +559,7 @@ Response (404)
 ```json
 {
   "content": "",
-  "user_id": 1
+  "userId": 1
 }
 ```
 
@@ -594,8 +572,6 @@ Response (400)
 {
   "name": "BadRequest",
   "message": "Content is required.",
-  "code": 400,
-  "className": "bad-request"
 }
 ```
 
@@ -620,12 +596,10 @@ Response (401)
 {
   "name": "NotAuthenticated",
   "message": "Not authenticated",
-  "code": 401,
-  "className": "not-authenticated"
 }
 ```
 
-## 7. GET /tweets/:tweet_id/comments
+## 7. GET /tweets/:tweetId/comments
 
 ### Description
 
@@ -648,8 +622,8 @@ Response (200)
     {
       "id": 1,
       "content": "tweet yang sangat bagus!!",
-      "tweet_id": 1,
-      "user_id": 1,
+      "tweetId": 1,
+      "userId": 1,
       "createdAt": "2023-11-20T01:14:46.000Z",
       "updatedAt": "2023-11-20T01:14:46.000Z"
     }
@@ -672,8 +646,6 @@ Response (404)
 {
   "name": "NotFound",
   "message": "No record found for id '2'",
-  "code": 404,
-  "className": "not-found"
 }
 ```
 
@@ -690,13 +662,11 @@ Response (401)
 {
   "name": "NotAuthenticated",
   "message": "Not authenticated",
-  "code": 401,
-  "className": "not-authenticated"
 }
 ```
 
 
-## 8. PATCH /tweets/:tweet_id/comments/:comment_id
+## 8. PATCH /tweets/:tweetId/comments/:comment_id
 
 
 ### Description
@@ -724,7 +694,7 @@ Response (200)
     "id": 1,
     "content": "ini di update",
     "likes": 0,
-    "user_id": 1,
+    "userId": 1,
     "createdAt": "2023-11-19T23:18:41.000Z",
     "updatedAt": "2023-11-19T23:18:41.000Z"
   }
@@ -754,8 +724,6 @@ Response (404)
 {
   "name": "NotFound",
   "message": "No record found for id '2'",
-  "code": 404,
-  "className": "not-found"
 }
 ```
 
@@ -781,8 +749,6 @@ Response (400)
 {
   "name": "BadRequest",
   "message": "Content is required.",
-  "code": 400,
-  "className": "bad-request"
 }
 ```
 
@@ -807,13 +773,11 @@ Response (401)
 {
   "name": "NotAuthenticated",
   "message": "Not authenticated",
-  "code": 401,
-  "className": "not-authenticated"
 }
 ```
 
 
-## 9. DELETE /tweets/:tweet_id/comments/:comment_id
+## 9. DELETE /tweets/:tweetId/comments/:comment_id
 
 ### Description
 
@@ -831,7 +795,7 @@ Response (200)
     "id": 1,
     "content": "ini di update",
     "likes": 0,
-    "user_id": 1,
+    "userId": 1,
     "createdAt": "2023-11-19T23:18:41.000Z",
     "updatedAt": "2023-11-19T23:18:41.000Z"
   }
@@ -853,8 +817,6 @@ Response (404)
 {
   "name": "NotFound",
   "message": "No record found for id '2'",
-  "code": 404,
-  "className": "not-found"
 }
 ```
 
@@ -872,8 +834,6 @@ Response (404)
 {
   "name": "NotFound",
   "message": "No record found for id '2'",
-  "code": 404,
-  "className": "not-found"
 }
 ```
 
@@ -898,12 +858,10 @@ Response (401)
 {
   "name": "NotAuthenticated",
   "message": "Not authenticated",
-  "code": 401,
-  "className": "not-authenticated"
 }
 ```
 
-## 10. DELETE /tweets/:tweet_id
+## 10. DELETE /tweets/:tweetId
 
 ### Description
 
@@ -922,7 +880,7 @@ Response (200)
     "id": 1,
     "content": "Sejak beberapa waktu lalu, serangan terus dilakukan Israel di sekitar RS Indonesia di Gaza sebab menuduh menyembunyikan komando dan kendali bawah tanah untuk Hamas.",
     "likes": 0,
-    "user_id": 1,
+    "userId": 1,
     "createdAt": "2023-11-20T01:14:34.000Z",
     "updatedAt": "2023-11-20T01:14:34.000Z"
   }
@@ -945,8 +903,6 @@ Response (404)
 {
   "name": "NotFound",
   "message": "No record found for id '5'",
-  "code": 404,
-  "className": "not-found"
 }
 ```
 
@@ -965,7 +921,5 @@ Response (401)
 {
   "name": "NotAuthenticated",
   "message": "Not authenticated",
-  "code": 401,
-  "className": "not-authenticated"
 }
 ```

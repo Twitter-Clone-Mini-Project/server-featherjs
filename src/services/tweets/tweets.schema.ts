@@ -13,7 +13,7 @@ export const tweetsSchema = Type.Object(
     id: Type.Number(),
     content: Type.String(),
     likes: Type.Number(), 
-    user_id: Type.Number(), 
+    userId: Type.Number(), 
     createdAt: Type.String(), 
     updatedAt: Type.String(), 
   },
@@ -26,7 +26,7 @@ export const tweetsResolver = resolve<Tweets, HookContext<TweetsService>>({})
 export const tweetsExternalResolver = resolve<Tweets, HookContext<TweetsService>>({})
 
 // Schema for creating new entries
-export const tweetsDataSchema = Type.Pick(tweetsSchema, ['content','user_id'], {
+export const tweetsDataSchema = Type.Pick(tweetsSchema, ['content','userId'], {
   $id: 'TweetsData'
 })
 export type TweetsData = Static<typeof tweetsDataSchema>
@@ -42,7 +42,7 @@ export const tweetsPatchValidator = getValidator(tweetsPatchSchema, dataValidato
 export const tweetsPatchResolver = resolve<Tweets, HookContext<TweetsService>>({})
 
 // Schema for allowed query properties
-export const tweetsQueryProperties = Type.Pick(tweetsSchema, ['id', 'content', 'likes', 'user_id','createdAt','updatedAt'])
+export const tweetsQueryProperties = Type.Pick(tweetsSchema, ['id', 'content', 'likes', 'userId','createdAt','updatedAt'])
 export const tweetsQuerySchema = Type.Intersect(
   [
     querySyntax(tweetsQueryProperties),

@@ -15,12 +15,13 @@ import {
   tweetsQueryResolver
 } from './tweets.schema'
 
-import type { Application } from '../../declarations'
+import type { Application, NextFunction } from '../../declarations'
 import { TweetsService, getOptions } from './tweets.class'
 import { tweetsPath, tweetsMethods } from './tweets.shared'
 
 export * from './tweets.class'
 export * from './tweets.schema'
+
 
 // A configure function that registers the service and its hooks via `app.configure`
 export const tweets = (app: Application) => {
@@ -37,7 +38,20 @@ export const tweets = (app: Application) => {
   app.service(tweetsPath).hooks({
     around: {
       all: [
-        authenticate('jwt'),
+        async (context: HookContext,next:NextFunction) => {
+          try {
+            await authenticate('jwt')(context)
+            await next()
+          } catch (error:any) {
+            console.log("masuk");
+            
+            context.statusCode = 401;
+            context.result = {
+              status: 'NotAuthenticated',
+              message: 'Not authenticated',
+            };
+          }
+        },
         schemaHooks.resolveExternal(tweetsExternalResolver),
         schemaHooks.resolveResult(tweetsResolver)
       ]
@@ -157,7 +171,17 @@ export const tweets = (app: Application) => {
       ],
     },
     error: {
-      all: []
+      all: [
+        async (context: HookContext) => {
+          context.statusCode = 400;
+            context.result = {
+              status: 'Bad Request',
+              message: context.error.message,
+            };
+  
+          return context;
+        },
+      ],
     }
   })
 }

@@ -15,7 +15,7 @@ import {
   commentsQueryResolver
 } from './comments.schema'
 
-import type { Application } from '../../declarations'
+import type { Application, NextFunction } from '../../declarations'
 import { CommentsService, getOptions } from './comments.class'
 import { commentsPath, commentsMethods } from './comments.shared'
 
@@ -35,7 +35,18 @@ export const comments = (app: Application) => {
   app.service(commentsPath).hooks({
     around: {
       all: [
-        authenticate('jwt'),
+        async (context: HookContext,next:NextFunction) => {
+          try {
+            await authenticate('jwt')(context)
+            await next()
+          } catch (error:any) {
+            context.statusCode = 401;
+            context.result = {
+              status: 'NotAuthenticated',
+              message: 'Not authenticated',
+            };
+          }
+        },
         schemaHooks.resolveExternal(commentsExternalResolver),
         schemaHooks.resolveResult(commentsResolver)
       ]
@@ -47,27 +58,27 @@ export const comments = (app: Application) => {
       ],
       find: [
         async (context:HookContext) => {
-          // Menangani kondisional untuk mendapatkan tweet_id dari URL
-          const tweetId = context.params?.route?.tweet_id;
+          // Menangani kondisional untuk mendapatkan tweetId dari URL
+          const tweetId = context.params?.route?.tweetId;
           const tweetBeforeUpdate = await context.app.service('tweets').get(tweetId);
          
-          // Menambahkan kondisional untuk mendapatkan data komentar berdasarkan tweet_id
-          context.params.query = { tweet_id: tweetId };
+          // Menambahkan kondisional untuk mendapatkan data komentar berdasarkan tweetId
+          context.params.query = { tweetId: tweetId };
         }
       ],
       get: [],
       create: [
         async (context: HookContext) => {
           const { data } = context;
-          const tweetId = context.params?.route?.tweet_id;
+          const tweetId = context.params?.route?.tweetId;
           
           const tweetBeforeUpdate = await context.app.service('tweets').get(tweetId);
    
           // Misalnya, menambahkan validasi bahwa content harus diisi
 
-          if (!data.tweet_id) {
-            // Jika tidak, set nilai 'tweet_id' dengan nilai dari params URL
-            data.tweet_id = Number(tweetId);
+          if (!data.tweetId) {
+            // Jika tidak, set nilai 'tweetId' dengan nilai dari params URL
+            data.tweetId = Number(tweetId);
           }
          
           if (data.content === "") {
@@ -82,7 +93,7 @@ export const comments = (app: Application) => {
       patch: [
         async (context: HookContext) => {
           const { data } = context;
-          const tweetId = context.params?.route?.tweet_id;
+          const tweetId = context.params?.route?.tweetId;
           const commentId = Number(context.id);
 
           
@@ -102,7 +113,7 @@ export const comments = (app: Application) => {
       ],
       remove: [
         async (context: HookContext) => {
-          const tweetId = context.params?.route?.tweet_id;
+          const tweetId = context.params?.route?.tweetId;
           
           const tweetBeforeUpdate = await context.app.service('tweets').get(tweetId);
 
@@ -170,7 +181,17 @@ export const comments = (app: Application) => {
       ],
     },
     error: {
-      all: []
+      all: [
+        async (context: HookContext) => {
+          context.statusCode = 400;
+            context.result = {
+              status: 'Bad Request',
+              message: context.error.message,
+            };
+  
+          return context;
+        },
+      ],
     }
   })
 }

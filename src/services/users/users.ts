@@ -62,18 +62,6 @@ export const user = (app: Application) => {
     before: {
       create: [
         (context: HookContext) => {
-          const { data } = context;
-
-          // // Misalnya, menambahkan validasi bahwa username harus diisi
-          // if (data.username === "") {
-          //   throw new BadRequest('Username is required.');
-          // }
-
-          //   // Misalnya, menambahkan validasi bahwa username harus diisi
-          //   if (data.password === "") {
-          //     throw new BadRequest('Password is required.');
-          //   }
-
             if (!context.data.strategy) {
               context.data.strategy = 'local';
             }
@@ -82,6 +70,20 @@ export const user = (app: Application) => {
         },
       ],
     },
+    error: {
+      all: [],
+      create: [
+        async (context: HookContext) => {
+          context.statusCode = 401;
+            context.result = {
+              status: 'Bad Request',
+              message: context.error.message,
+            };
+  
+          return context;
+        },
+      ],
+    }
   });
   // Initialize hooks
   app.service(userPath).hooks({
@@ -114,7 +116,7 @@ export const user = (app: Application) => {
             }
 
              // Misalnya, menambahkan validasi bahwa username harus diisi
-             if (data.confirm_password === "") {
+             if (data.confirmPassword === "") {
               throw new BadRequest('Confirm Password is required.');
             }
 
@@ -122,11 +124,11 @@ export const user = (app: Application) => {
               throw new BadRequest('Password is too short. Please provide a password with at least 3 characters.');
             }
 
-              // Pastikan password dan confirm_password cocok
-            if (data.password !== data.confirm_password) {
+              // Pastikan password dan confirmPassword cocok
+            if (data.password !== data.confirmPassword) {
                 throw new BadRequest('Password do not match.');
             }else{
-              delete data.confirm_password
+              delete data.confirmPassword
             }
 
           // Anda dapat menambahkan validasi lain sesuai kebutuhan
@@ -166,10 +168,13 @@ export const user = (app: Application) => {
             if (context.error.message.includes('Duplicate entry')) {
               // Ganti pesan kesalahan dengan pesan yang diinginkan
               context.error.message = 'Username is already taken. Please choose a different username.';
-              
-              // Set kode status menjadi 400 Bad Request
-              context.statusCode = 400;
             }
+            // Set kode status menjadi 400 Bad Request
+            context.statusCode = 400;
+            context.result = {
+              status: 'Bad Request',
+              message: context.error.message,
+            };
           }
   
           return context;
